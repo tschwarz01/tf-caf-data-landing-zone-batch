@@ -1,6 +1,5 @@
 
 resource "azurerm_mssql_server" "sqlServer" {
-  count                         = var.create_azuresql ? 1 : 0
   name                          = "${var.name}-sql01"
   resource_group_name           = var.rgName
   location                      = var.location
@@ -23,9 +22,8 @@ resource "azurerm_mssql_server" "sqlServer" {
 }
 
 resource "azurerm_mssql_database" "sqlDatabase001" {
-  count                       = var.create_azuresql ? 1 : 0
   name                        = "Database001"
-  server_id                   = azurerm_mssql_server.sqlServer[0].id
+  server_id                   = azurerm_mssql_server.sqlServer.id
   collation                   = "SQL_Latin1_General_CP1_CI_AS"
   license_type                = "LicenseIncluded"
   max_size_gb                 = 1
@@ -38,15 +36,14 @@ resource "azurerm_mssql_database" "sqlDatabase001" {
 }
 
 resource "azurerm_private_endpoint" "sqlDatabasePrivateEndpoint" {
-  count               = var.create_azuresql ? 1 : 0
-  name                = "${var.name}-${azurerm_mssql_database.sqlDatabase001[0].name}-sql-private-endpoint"
+  name                = "${var.name}-${azurerm_mssql_database.sqlDatabase001.name}-sql-private-endpoint"
   location            = var.location
   resource_group_name = var.rgName
   subnet_id           = var.svcSubnetId
 
   private_service_connection {
-    name                           = "${var.name}-${azurerm_mssql_database.sqlDatabase001[0].name}-sql-private-endpoint-connection"
-    private_connection_resource_id = azurerm_mssql_database.sqlDatabase001[0].id
+    name                           = "${var.name}-${azurerm_mssql_database.sqlDatabase001.name}-sql-private-endpoint-connection"
+    private_connection_resource_id = azurerm_mssql_database.sqlDatabase001.id
     subresource_names              = ["sqlServer"]
     is_manual_connection           = false
   }

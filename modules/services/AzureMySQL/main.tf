@@ -1,6 +1,5 @@
 data "azurerm_client_config" "current" {}
 resource "azurerm_mysql_server" "mysqlServer001" {
-  count               = var.create_mysql ? 1 : 0
   name                = var.mysql001Name
   location            = var.location
   resource_group_name = var.rgName
@@ -22,8 +21,7 @@ resource "azurerm_mysql_server" "mysqlServer001" {
 }
 
 resource "azurerm_mysql_active_directory_administrator" "mysqlServerADConfig" {
-  count               = var.create_mysql ? 1 : 0
-  server_name         = azurerm_mysql_server.mysqlServer001[0].name
+  server_name         = azurerm_mysql_server.mysqlServer001.name
   resource_group_name = var.rgName
   login               = var.mysqlserverAdminGroupName
   tenant_id           = data.azurerm_client_config.current.tenant_id
@@ -31,16 +29,14 @@ resource "azurerm_mysql_active_directory_administrator" "mysqlServerADConfig" {
 }
 
 resource "azurerm_mysql_database" "mysqlserverDatabase001" {
-  count               = var.create_mysql ? 1 : 0
   name                = "Database001"
   resource_group_name = var.rgName
-  server_name         = azurerm_mysql_server.mysqlServer001[0].name
+  server_name         = azurerm_mysql_server.mysqlServer001.name
   charset             = "utf8"
   collation           = "utf8_unicode_ci"
 }
 
 resource "azurerm_private_endpoint" "mysqlserverPrivateEndpoint" {
-  count               = var.create_mysql ? 1 : 0
   name                = "${var.name}-Database001-mysql-private-endpoint"
   location            = var.location
   resource_group_name = var.rgName
@@ -48,7 +44,7 @@ resource "azurerm_private_endpoint" "mysqlserverPrivateEndpoint" {
 
   private_service_connection {
     name                           = "${var.name}-Database001-mysql-private-endpoint-connection"
-    private_connection_resource_id = azurerm_mysql_server.mysqlServer001[0].id
+    private_connection_resource_id = azurerm_mysql_server.mysqlServer001.id
     subresource_names              = ["mysqlServer"]
     is_manual_connection           = false
   }

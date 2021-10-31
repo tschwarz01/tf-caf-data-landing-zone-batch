@@ -60,6 +60,29 @@ resource "azurerm_data_factory_integration_runtime_azure" "datafactoryManagedInt
   location            = var.location
 }
 
+resource "azurerm_role_assignment" "target" {
+  count                = length(var.sharedSelfHostedIntegrationRuntimeId) > 0 && length(var.sharedDataFactoryId) > 0 ? 1 : 0
+  scope                = var.sharedDataFactoryId
+  role_definition_name = "Contributor"
+  principal_id         = azurerm_data_factory.dataFactory.identity[0].principal_id
+  depends_on = [
+    azurerm_data_factory.dataFactory
+  ]
+}
+
+resource "azurerm_data_factory_integration_runtime_self_hosted" "target" {
+  count               = length(var.sharedSelfHostedIntegrationRuntimeId) > 0 && length(var.sharedDataFactoryId) > 0 ? 1 : 0
+  name                = "${var.name}sharedshir"
+  data_factory_name   = azurerm_data_factory.dataFactory.name
+  resource_group_name = var.rgName
+
+  rbac_authorization {
+    resource_id = var.sharedSelfHostedIntegrationRuntimeId
+  }
+
+  depends_on = [azurerm_role_assignment.target]
+}
+
 resource "azurerm_data_factory_managed_private_endpoint" "datafactoryKeyVault001ManagedPrivateEndpoint" {
   name               = "${local.keyVault001Name}MPE"
   data_factory_id    = azurerm_data_factory.dataFactory.id
@@ -81,4 +104,3 @@ resource "azurerm_data_factory_linked_service_key_vault" "datafactoryKeyVault001
     azurerm_data_factory_managed_private_endpoint.datafactoryKeyVault001ManagedPrivateEndpoint
   ]
 }
-

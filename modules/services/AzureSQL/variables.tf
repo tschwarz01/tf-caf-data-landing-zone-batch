@@ -53,8 +53,3 @@ variable "sqlAdminPassword" {
 variable "sql001Name" {
   type = string
 }
-
-variable "create_azuresql" {
-  type = bool
-
-}

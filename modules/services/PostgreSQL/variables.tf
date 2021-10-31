@@ -43,7 +43,3 @@ variable "sqlAdminPassword" {
 variable "postgresql001Name" {
   type = string
 }
-
-variable "create_postgresql" {
-  type = bool
-}

@@ -1,5 +1,4 @@
 resource "azurerm_postgresql_server" "postgresql" {
-  count               = var.create_postgresql ? 1 : 0
   name                = var.postgresql001Name
   location            = var.location
   resource_group_name = var.rgName
@@ -22,24 +21,22 @@ resource "azurerm_postgresql_server" "postgresql" {
 
 
 resource "azurerm_postgresql_database" "postgresqlDatabase001" {
-  count               = var.create_postgresql ? 1 : 0
   name                = "Database001"
   resource_group_name = var.rgName
-  server_name         = azurerm_postgresql_server.postgresql[0].name
+  server_name         = azurerm_postgresql_server.postgresql.name
   charset             = "UTF8"
   collation           = "English_United States.1252"
 }
 
 resource "azurerm_private_endpoint" "postgresqlDatabasePrivateEndpoint" {
-  count               = var.create_postgresql ? 1 : 0
-  name                = "${var.name}-${azurerm_postgresql_database.postgresqlDatabase001[0].name}-postgresql-private-endpoint"
+  name                = "${var.name}-${azurerm_postgresql_database.postgresqlDatabase001.name}-postgresql-private-endpoint"
   location            = var.location
   resource_group_name = var.rgName
   subnet_id           = var.svcSubnetId
 
   private_service_connection {
-    name                           = "${var.name}-${azurerm_postgresql_database.postgresqlDatabase001[0].name}-postgresql-private-endpoint-connection"
-    private_connection_resource_id = azurerm_postgresql_database.postgresqlDatabase001[0].id
+    name                           = "${var.name}-${azurerm_postgresql_database.postgresqlDatabase001.name}-postgresql-private-endpoint-connection"
+    private_connection_resource_id = azurerm_postgresql_database.postgresqlDatabase001.id
     subresource_names              = ["postgresqlServer"]
     is_manual_connection           = false
   }

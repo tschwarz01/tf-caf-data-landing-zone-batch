@@ -113,23 +113,28 @@ variable "privateDnsZoneIdPostgreSql" {
   description = "Specifies the resource ID of the private DNS zone for Azure Database for PostgreSQL."
 }
 
-variable "create_azuresql" {
-  type        = bool
-  description = "Set to true to deploy an Azure SQL Server and Azure SQL Database instance"
+variable "sql_offering" {
+  type        = string
+  description = "Specifies the type of managed relational database that will be deployed (None, SQL Server, MySQL Server, MariaDB Server, PostgreSQL Server)."
+
+  validation {
+    condition     = contains(["none", "azuresql", "mysql", "mariadb", "postgresql"], lower(var.sql_offering))
+    error_message = "Valid values for var: test_variable are (none, azuresql, mysql, mariadb and postgresql)."
+  }
 }
 
-variable "create_mysql" {
-  type        = bool
-  description = "Set to true to deploy an instance of Azure Database for MySQL"
+variable "shared_shir" {
+  type = map(any)
+  default = {
+    sharedDataFactoryId                  = ""
+    sharedSelfHostedIntegrationRuntimeId = ""
+  }
 }
 
-variable "create_mariadb" {
-  type        = bool
-  description = "Set to true to deploy an instance of Azure Database for MariaDB"
+variable "lz_resource_groups" {
+  type = map(any)
+  default = {
+    targetProductResourceGroup     = ""
+    targetIntegrationResourceGroup = ""
+  }
 }
-
-variable "create_postgresql" {
-  type        = bool
-  description = "Set to true to deploy an instance of Azure Database for PostgeSQL"
-}
-

@@ -1,5 +1,4 @@
 resource "azurerm_mariadb_server" "mariadb" {
-  count               = var.create_mariadb ? 1 : 0
   name                = var.mariadb001Name
   location            = var.location
   resource_group_name = var.rgName
@@ -19,24 +18,22 @@ resource "azurerm_mariadb_server" "mariadb" {
 }
 
 resource "azurerm_mariadb_database" "mariadbDatabase001" {
-  count               = var.create_mariadb ? 1 : 0
   name                = "Database001"
   resource_group_name = var.rgName
-  server_name         = azurerm_mariadb_server.mariadb[0].name
+  server_name         = azurerm_mariadb_server.mariadb.name
   charset             = "utf8"
   collation           = "utf8_general_ci"
 }
 
 resource "azurerm_private_endpoint" "mariadbDatabasePrivateEndpoint" {
-  count               = var.create_mariadb ? 1 : 0
-  name                = "${var.name}-${azurerm_mariadb_database.mariadbDatabase001[0].name}-mariadb-private-endpoint"
+  name                = "${var.name}-${azurerm_mariadb_database.mariadbDatabase001.name}-mariadb-private-endpoint"
   location            = var.location
   resource_group_name = var.rgName
   subnet_id           = var.svcSubnetId
 
   private_service_connection {
-    name                           = "${var.name}-${azurerm_mariadb_database.mariadbDatabase001[0].name}-mariadb-private-endpoint-connection"
-    private_connection_resource_id = azurerm_mariadb_database.mariadbDatabase001[0].id
+    name                           = "${var.name}-${azurerm_mariadb_database.mariadbDatabase001.name}-mariadb-private-endpoint-connection"
+    private_connection_resource_id = azurerm_mariadb_database.mariadbDatabase001.id
     subresource_names              = ["mariadbServer"]
     is_manual_connection           = false
   }

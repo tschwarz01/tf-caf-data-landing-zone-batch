@@ -8,5 +8,8 @@ locals {
   mysql001Name       = "${local.name}-mysql001"
   mariadb001Name     = "${local.name}-mariadb001"
   postgresql001Name  = "${local.name}-postgresql001"
+
+  productResourceGroup     = coalesce(var.lz_resource_groups.targetProductResourceGroup, "rg-${local.name}-datalz-product${random_integer.randomInt.result}-batch")
+  integrationResourceGroup = coalesce(var.lz_resource_groups.targetIntegrationResourceGroup, "rg-${local.name}-datalz-integration${random_integer.randomInt.result}-batch")
 }
 

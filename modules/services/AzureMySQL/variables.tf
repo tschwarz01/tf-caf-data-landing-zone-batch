@@ -53,8 +53,3 @@ variable "mysqlserverAdminGroupObjectID" {
 variable "mysql001Name" {
   type = string
 }
-
-variable "create_mysql" {
-  type = bool
-
-}

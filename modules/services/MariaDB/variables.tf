@@ -43,7 +43,3 @@ variable "sqlAdminPassword" {
 variable "mariadb001Name" {
   type = string
 }
-
-variable "create_mariadb" {
-  type = bool
-}

@@ -47,8 +47,17 @@ variable "name" {
   type = string
 }
 
-
 variable "rgName" {
   type        = string
   description = "The name of the resource group"
+}
+
+variable "sharedDataFactoryId" {
+  type        = string
+  description = "The resource ID of the Data Factory instance in the 'shared-integration' resource group of the base Data Landing Zone deployment"
+}
+
+variable "sharedSelfHostedIntegrationRuntimeId" {
+  type        = string
+  description = "The resource ID of the shared Self-Hosted Integration Runtime instance residing in the 'shared-integration' resource group of the base Data Landing Zone deployment"
 }
